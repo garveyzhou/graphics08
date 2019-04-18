@@ -23,8 +23,6 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
   double tx,ty,tz,mx,my,mz,bx,by,bz;
   color c;
   c.red = random() % 255;
-  c.green = random() % 255;
-  c.blue = random() % 255;
 
   double y0 = points->m[1][i];
   double y1 = points->m[1][i+1];
@@ -95,22 +93,26 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zb ) {
       }
     }
 
-    double x0 = (int) bx;
-    double x1 = (int) bx;
+    double x0 = bx;
+    double x1 = bx;
 
-    double z0 = (int) bz;
-    double z1 = (int) bz;
+    double z0 = bz;
+    double z1 = bz;
 
     for(int y = by; y < ty; y += 2){
         x0 += (tx - bx) / (ty - by);
-        z0 += (tz - bz) / (ty - by);
 
-        if(y < my){
+        if(y <= my){
             x1 += (mx - bx) / (my - by);
+            z1 += (mz - bz) / (my - by);
         } else {
             x1 += (tx - mx) / (ty - my);
+            z1 += (tz - mz) / (ty - my);
         }
-        z1 += (tz - mz) / (ty - my);
+
+        z0 += (tz - bz) / (ty - by);
+
+
         draw_line(x0, y, z0, x1, y, z1, s, zb, c);
       }
 }
